@@ -7,11 +7,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Home from './Home';
 import Navbar from './NavBar';
+import GuestParking from './GuestParking';
 
 const routes = createRoutesFromElements(
     <>
     <Route path="/home" element={<Home />}/>
     <Route path="/navbar" element={<Navbar />}/>
+    <Route path="/guestparking" element={<GuestParking />}/>
     </>
   )
 
