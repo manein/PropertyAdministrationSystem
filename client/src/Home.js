@@ -1,16 +1,18 @@
 import React from 'react';
 import './App.css';
 import Navbar from './NavBar';
+import VideoBackground from './Video';
 
 function App() {
   return (
-    <div> <Navbar />
-    <div className="App">
-      <header className="App-header">
-        <h1>Property Administration System</h1>
-      </header>
-      
-    </div>
+    <div>
+      <Navbar />
+      <VideoBackground />
+      <div className="App">
+        <header className="App-header">
+          <h1>Property Administration System</h1>
+        </header>
+      </div>
     </div>
   );
 }

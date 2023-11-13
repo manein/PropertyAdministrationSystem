@@ -8,12 +8,14 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import Home from './Home';
 import Navbar from './NavBar';
 import GuestParking from './GuestParking';
+import AboutUs from './Aboutus';
 
 const routes = createRoutesFromElements(
     <>
     <Route path="/home" element={<Home />}/>
     <Route path="/navbar" element={<Navbar />}/>
     <Route path="/guestparking" element={<GuestParking />}/>
+    <Route path="/aboutus" element={<AboutUs />}/>
     </>
   )
 

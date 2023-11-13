@@ -37,7 +37,8 @@ const GuestParkingForm = () => {
 
 
   return (
-    <div  className='page'>
+    
+    <div  className="page">
     <div> <Navbar />
         <div className="auth-form" style={{ width: '80%' }}>
         <h2 style={{ textAlign: 'center' }}>Book Guest Parking</h2>
