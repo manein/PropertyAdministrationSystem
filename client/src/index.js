@@ -9,6 +9,7 @@ import Home from './Home';
 import Navbar from './NavBar';
 import GuestParking from './GuestParking';
 import AboutUs from './Aboutus';
+import Login from './Login';
 
 const routes = createRoutesFromElements(
     <>
@@ -16,6 +17,7 @@ const routes = createRoutesFromElements(
     <Route path="/navbar" element={<Navbar />}/>
     <Route path="/guestparking" element={<GuestParking />}/>
     <Route path="/aboutus" element={<AboutUs />}/>
+    <Route path="/login" element={<Login />}/>
     </>
   )
 
