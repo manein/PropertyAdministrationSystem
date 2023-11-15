@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './NavBar';
-
+import axios from 'axios';
 
 const GuestParkingForm = () => {
   const [formData, setFormData] = useState({
@@ -19,9 +19,25 @@ const GuestParkingForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your form submission logic here
+    try {
+        const response = await axios.post('http://localhost:9000/checkUser', formData);
+        console.log(response.data);
+        alert('Parking Booked Successfully!')
+        setFormData({
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            licensePlate: '',
+            state: '',
+            vehicleType: 'car',
+            startDate: '',
+            endDate: '',
+          });
+      } catch (error) {
+        console.error('Error submitting form:', error.message);
+      }
     console.log('Form submitted:', formData);
   };
 
