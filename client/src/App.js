@@ -12,17 +12,17 @@ import Login from './Login';
 import SignUp from './SignUp';
 import ManageTenants from './AdminComponents/ManageTenants';
 import ManageAnnouncements from './AdminComponents/ManageAnnouncements';
-import ViewAnnouncements from './TenantComponets/ViewAnnouncements';
-import PostMaintenanceRequest from './TenantComponets/PostMaintenanceRequest';
+import ViewAnnouncements from './TenantComponents/ViewAnnouncements';
+import PostMaintenanceRequest from './TenantComponents/PostMaintenanceRequest';
 import MaintenanceRequestList from './MaintainceTeamComponents/MaintenanceRequestList';
-import TenantMaintenanceRequests from './TenantComponets/TenantMaintenanceRequests';
-import RequestGuestParking from './TenantComponets/RequestGuestParking';
+import TenantMaintenanceRequests from './TenantComponents/TenantMaintenanceRequests';
+import RequestGuestParking from './TenantComponents/RequestGuestParking';
 import GuestParkingManager from './SecurityComponents/GuestParkingManager';
-import TenantGuestParkingStatus from './TenantComponets/TenantGuestParkingStatus';
+import TenantGuestParkingStatus from './TenantComponents/TenantGuestParkingStatus';
 
 import AdminDash from './AdminComponents/AdminDash';
 import MaintenanceDash from './MaintainceTeamComponents/MaintenanceDash';
-import TenantDash from './TenantComponets/TenantDash';
+import TenantDash from './TenantComponents/TenantDash';
 import SecurityDash from './SecurityComponents/SecurityDash';
     
 
