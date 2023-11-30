@@ -416,3 +416,17 @@ app.post('/unassignTParking', async (req, res) => {
     }
 });
 
+app.get('/api/tenantParking/:tenantId', async (req, res) => {
+    try {
+        const tenantId = req.params.tenantId;
+        const parkings = await TenantParking.find({ tenantId: tenantId, isAssigned: true });
+
+        if (!parkings || parkings.length === 0) {
+            return res.status(404).send('No parking details found for the specified tenant.');
+        }
+
+        res.send(parkings);
+    } catch (error) {
+        res.status(500).send('Something went wrong');
+    }
+});

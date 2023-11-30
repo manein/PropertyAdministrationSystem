@@ -1,6 +1,8 @@
 import React, { useState,useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../Auth_files/AuthProvider';
+
+
 import TenantNavbar from './TenantNavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -33,7 +35,7 @@ const PostMaintenanceRequest = () => {
         };
 
         try {
-            const response = await axios.post('http://localhost:9000/maintenanceRequests', requestPayload);
+            await axios.post('http://localhost:9000/maintenanceRequests', requestPayload);
             alert("Request Posted successfully");
             setPriority('');
             setCategory('');
