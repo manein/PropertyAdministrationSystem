@@ -2,6 +2,10 @@ import React, { useState,useContext,useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../Auth_files/AuthProvider';
 import TenantNavbar from './TenantNavbar';
+import Calendar from 'react-calendar';
+import TimePicker from 'react-time-picker';
+import 'react-calendar/dist/Calendar.css';
+import 'react-time-picker/dist/TimePicker.css';
 
 const PostMaintenanceRequest = () => {
     const [priority, setPriority] = useState('');
@@ -10,8 +14,29 @@ const PostMaintenanceRequest = () => {
     const [availableTimings, setAvailableTimings] = useState('');
     const { getUserFromLocalStorage } = useContext(AuthContext);
     const user = getUserFromLocalStorage();
+    const [dates, setDates] = useState([]);
+    const [times, setTimes] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState('12:00');
+
+    const addBookingSlot = () => {
+        setDates([...dates, selectedDate]);
+        setTimes([...times, selectedTime]);
+        // Reset selected date and time
+        setSelectedDate(new Date());
+        setSelectedTime('12:00');
+      };
+    
 
     const userId  = user ? user._id : ""
+
+    const handleDateChange = (newDate) => {
+        setSelectedDate(newDate);
+      };
+    
+      const handleTimeChange = (newTime) => {
+        setSelectedTime(newTime);
+      };
     
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -76,6 +101,18 @@ const PostMaintenanceRequest = () => {
                         required
                         placeholder="e.g., Weekdays after 6pm or Saturday 9am-12pm"
                     />
+                </div>
+                <div className="mb-3">
+                <label className="form-label">Dates:</label>
+                    <Calendar
+                    onChange={handleDateChange}
+                    value={selectedDate}
+                    selectRange
+                    />
+                </div>
+                <div className="mb-3">
+                <label>Time:</label>
+                    <TimePicker onChange={handleTimeChange} value={selectedTime} />
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-primary">Submit</button>
