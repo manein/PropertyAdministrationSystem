@@ -18,7 +18,10 @@ export default function SecurityNavbar() {
                 <span className="navbar-brand mb-0 h1">Security Dashboard</span>
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                        <a className="nav-link" href="/security">Guest Parking Manager</a>
+                        <a className="nav-link" href="/security">Manage Guest Parking</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link" href="/ManageTParking">Manage Tenant Parking</a>
                     </li>
                 </ul>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>

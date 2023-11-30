@@ -24,6 +24,7 @@ import AdminDash from './AdminComponents/AdminDash';
 import MaintenanceDash from './MaintainceTeamComponents/MaintenanceDash';
 import TenantDash from './TenantComponents/TenantDash';
 import SecurityDash from './SecurityComponents/SecurityDash';
+import AssignTenantParking from './SecurityComponents/AssignTenantParking';
     
 
 function App() {
@@ -55,8 +56,10 @@ function App() {
                 
                 <Route path="/viewMyGPStatus" element={<ProtectedElement><TenantGuestParkingStatus /></ProtectedElement>}/>
                 
-
                 <Route path="/MainReqList" element={<ProtectedElement><MaintenanceRequestList /></ProtectedElement>}/>
+
+                <Route path="/ManageTParking" element={<ProtectedElement><AssignTenantParking /></ProtectedElement>}/>
+                
             </Routes>
       </Router>
     </AuthProvider>
