@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
     HouseNum :{
         type : String,
         required: true
-    }
+    },
+
 });
 
 module.exports = mongoose.model('User', userSchema);

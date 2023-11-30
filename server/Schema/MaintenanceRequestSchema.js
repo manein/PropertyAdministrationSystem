@@ -15,10 +15,22 @@ const maintenanceRequestSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    availableTimings: {
-        type: String,
-        required: true
-    },
+
+    availableDates: [{
+        date: {
+            type: Date,
+            required: true
+        },
+        fromTime: {
+            type: String,
+            required: true
+        },
+        toTime: {
+            type: String,
+            required: true
+        }
+    }],
+    
     tenantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
