@@ -1,9 +1,10 @@
 import React from 'react';
-import Navbar from './NavBar';
+import TenantNavbar from './TenantComponents/TenantNavbar';
+
 
 const AboutUs = () => {
   return (
-    <div> <Navbar />
+    <div> <TenantNavbar />
     <div className="about-us-container" style={{ backgroundColor: '#282c34', color:'white', textAlign: 'center', padding: '20px' }}>
        
       <h1>Welcome to Prperty Administration System</h1>
