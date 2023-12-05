@@ -41,24 +41,47 @@ const RequestGuestParking = () => {
             });
     };
 
+    const usStates = [
+        'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida',
+        'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
+        'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+        'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma',
+        'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah',
+        'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+      ];
+
+      const calculateAmount = () => {
+        const start = new Date(requestedFrom);
+        const end = new Date(requestedTo);
+        const timeDiff = Math.abs(end.getTime() - start.getTime());
+        const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+        
+    
+        return days * 10
+      };
+
     return (
         <>
         <TenantNavbar/>
-        <div className="container mt-3">
+        <div className="auth-form">
             <h2 className="text-center mb-4">Request Guest Parking</h2>
             <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="carType" className="form-label">Car Type</label>
-                    <input 
-                        type="text" 
+                <div className="form-group">
+                    <label htmlFor="carType" className="form-group">Car Type</label>
+                    <select
                         className="form-control" 
                         id="carType" 
                         value={carType} 
                         onChange={(e) => setCarType(e.target.value)} 
-                        required 
-                    />
+                        required
+                    >
+                        <option value="car">Car</option>
+                <option value="motorcycle">Motorcycle</option>
+                <option value="truck">Truck</option>
+                    </select>
                 </div>
-                <div className="mb-3">
+                <div className="form-group">
                     <label htmlFor="vehicleNum" className="form-label">Vehicle Number</label>
                     <input 
                         type="text" 
@@ -69,7 +92,25 @@ const RequestGuestParking = () => {
                         required 
                     />
                 </div>
-                <div className="mb-3">
+                <div className="form-group">
+                <label>State:</label>
+                        <select
+                        className="form-control"
+                        name="state"
+                        required
+                        >
+                        <option value="">Select a state</option>
+                        {usStates.map((state) => (
+                            <option key={state} value={state}>
+                            {state}
+                            </option>
+                        ))}
+                        </select>
+                    
+
+                </div>
+
+                <div className="form-group">
                     <label htmlFor="name" className="form-label">Guest's Name</label>
                     <input 
                         type="text" 
@@ -80,7 +121,7 @@ const RequestGuestParking = () => {
                         required 
                     />
                 </div>
-                <div className="mb-3">
+                <div className="form-group">
                     <label htmlFor="requestedFrom" className="form-label">Requested From</label>
                     <input 
                         type="date" 
@@ -91,7 +132,7 @@ const RequestGuestParking = () => {
                         required 
                     />
                 </div>
-                <div className="mb-3">
+                <div className="form-group">
                     <label htmlFor="requestedTo" className="form-label">Requested To</label>
                     <input 
                         type="date" 
@@ -102,6 +143,14 @@ const RequestGuestParking = () => {
                         required 
                     />
                 </div>
+                <div>
+                <div className="amount-box">
+                    <div className="amount-label">Amount:</div>
+                <div className="amount-value">
+                    <strong>{calculateAmount()}$</strong>
+                </div>
+                </div>
+            </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-primary">Submit Request</button>
                 </div>
