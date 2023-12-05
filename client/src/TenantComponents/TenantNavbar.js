@@ -16,7 +16,7 @@ export default function TenantNavbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
-                <span className="navbar-brand mb-0 h1">Hello, {user?.fname}</span>
+                <span className="navbar-brand mb-0 h1"><a href='/tenant' >Hello, {user?.fname}</a></span>
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
                         <a className="nav-link" href="/tenant">View Announcements</a>
