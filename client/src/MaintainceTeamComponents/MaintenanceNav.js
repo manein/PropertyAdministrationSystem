@@ -13,14 +13,14 @@ export default function MaintenanceNav() {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-                <span className="navbar-brand mb-0 h1">Maintenance Dashboard</span>
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li className="nav-item">
+        <nav className="navbar">
+            <div className="navbar-left">
+                <span className="navbar-stable">Maintenance Dashboard</span>
+                    <div className="navbar-item">
                         <a className="nav-link" href="/maintenance">Maintenance Request List</a>
-                    </li>
-                </ul>
+                    </div>
+            </div>
+            <div>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
             </div>
         </nav>

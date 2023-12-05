@@ -83,7 +83,7 @@ const PostMaintenanceRequest = () => {
     return (
         <>
         <TenantNavbar/>
-        <div className="container mt-3 ">
+        <div className="auth-form">
             <h2 className="text-center mb-4">Post Maintenance Request</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
