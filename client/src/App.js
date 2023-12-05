@@ -25,6 +25,7 @@ import MaintenanceDash from './MaintainceTeamComponents/MaintenanceDash';
 import TenantDash from './TenantComponents/TenantDash';
 import SecurityDash from './SecurityComponents/SecurityDash';
 import AssignTenantParking from './SecurityComponents/AssignTenantParking';
+import Demo from './Demo';
     
 
 function App() {
@@ -38,11 +39,12 @@ function App() {
                 <Route path="/security"   element={<ProtectedElement><SecurityDash /></ProtectedElement> } />
 
                 <Route path="/home" element={<Home />}/>
+                <Route path="/demo" element={<Demo />}/>
                 <Route path="/navbar" element={<Navbar />}/>
                 <Route path="/guestparking" element={<GuestParking />}/>
                 <Route path="/aboutus" element={<AboutUs />}/>
                 <Route path="/login" element={<Login />}/>
-                <Route path="/" element={<SignUp />}/>
+                <Route path="/" element={<Demo />}/>
                 <Route path="/signup" element={<SignUp />}/>
                 <Route path="/manageTenant" element={<ManageTenants />}/>
                 <Route path="/manageAnnounc" element={<ManageAnnouncements />}/>

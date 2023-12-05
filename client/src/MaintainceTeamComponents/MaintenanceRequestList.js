@@ -48,8 +48,6 @@ const MaintenanceRequestList = () => {
                                 <h5>Category: {request.category}</h5>
                                 <p>Priority: {request.priority}</p>
                                 <p>Description: {request.description}</p>
-                                <p>Tenant House No : {request.tenantId.HouseNum}</p>
-                                <p>Tenant Name: {request.tenantId.fname} {request.tenantId.lname}</p>
                                 {request.availableDates.map((date, index) => (
                                     <p key={index}>Availability: {formatDateTime(date.date, date.fromTime)} to {formatDateTime(date.date, date.toTime)}</p>
                                 ))}
