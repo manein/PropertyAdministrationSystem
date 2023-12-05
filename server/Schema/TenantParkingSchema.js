@@ -1,16 +1,11 @@
 const mongoose = require('mongoose');
 
-const validateLotNum = (value) => {
-    return value >= 1 && value <= 15;
-};
-
 
 const tenantParkingSchema = new mongoose.Schema({
     LotNum: {
-        type: String,
+        type: Number,
         required: true,
-        unique: true,
-        validate: [validateLotNum, 'LotNum must be between 1 and 15']
+        unique: true
     },
     tenantId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,12 +16,14 @@ const tenantParkingSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    // Additional fields like 'assignedDate' could be added
     assignedDate: {
         type: Date,
         default: Date.now
+    },
+    assignedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
-    // ... other fields as needed
 });
 
 module.exports = mongoose.model('TenantParking', tenantParkingSchema);

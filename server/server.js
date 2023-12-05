@@ -22,6 +22,7 @@ const User = require('./Schema/Users');
 const Announcement= require('./Schema/Annoucements');
 const MaintenanceRequest = require('./Schema/MaintenanceRequestSchema');
 const GuestParking = require('./Schema/GuestParkingSchema'); 
+const TenantParking = require('./Schema/TenantParkingSchema')
 
 // SignUP APIS
 app.post('/createUser', async (req, res) => {
@@ -158,10 +159,18 @@ app.post('/maintenanceRequests', async (req, res) => {
 app.get('/unresolvedMainReq', async (req, res) => {
     try {
         const unresolvedRequests = await MaintenanceRequest.find({ isresolved: false })
-            .populate('tenantId', 'fname lname HouseNum -_id') 
+            .populate('tenantId', 'fname lname HouseNum -_id')
             .exec();
 
-        res.json(unresolvedRequests);
+        
+        res.json(unresolvedRequests.map(req => ({
+            ...req._doc,
+            availableDates: req.availableDates.map(date => ({
+                date: date.date, 
+                fromTime: date.fromTime,
+                toTime: date.toTime
+            }))
+        })));
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -278,5 +287,146 @@ app.get('/guestParking/tenantRequests/:tenantId', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
+    }
+});
+
+
+
+app.get('/unassignedParkingSpaces', async (req, res) => {
+    try {
+        // Fetch the list of parking spaces from the database
+        const parkingSpaces = await TenantParking.find({});
+        const assignedParkingSpaces = parkingSpaces.map((space) => space.LotNum);
+
+        const totalParkingSpaces = 15; // Total number of parking spaces
+
+        // Generate an array of unassigned parking spaces (LotNum values)
+        const unassignedSpaces = Array.from({ length: totalParkingSpaces }, (_, index) => {
+            const LotNum = index + 1;
+            
+            // Check if the LotNum exists in the database and is not assigned
+            const isAssigned = assignedParkingSpaces.includes(LotNum);
+            
+            return { LotNum, isAssigned: isAssigned }; // Mark as unassigned if not in the database
+        });
+        // console.log(unassignedSpaces);
+        res.json(unassignedSpaces);
+    } catch (error) {
+        console.error('Error fetching unassigned parking spaces:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+app.get('/getValidTenants', async (req, res) => {
+    try {
+        const validTenants = await User.find({ role: 'tenant', isAccepted: true });
+        res.json(validTenants);
+    } catch (error) {
+        console.error('Error fetching valid tenants:', error);
+        res.status(500).json({ message: 'Error fetching valid tenants', error: error });
+    }
+});
+
+app.post('/assignTParking', async (req, res) => {
+    const { tenantId, LotNum } = req.body;
+    try {
+        // Check if the parking space exists
+        let parkingSpace = await TenantParking.findOne({ LotNum });
+
+        if (!parkingSpace) {
+            // If parking space doesn't exist, create a new one
+            parkingSpace = new TenantParking({
+                LotNum,
+                tenantId,
+                isAssigned: true,
+                assignedBy: req.body.assignedBy._id,
+                assignedDate: new Date()
+            });
+
+            await parkingSpace.save();
+            return res.status(200).json({ message: 'Parking space assigned successfully.' });
+        }
+
+        if (parkingSpace.isAssigned) {
+            // Parking space is already assigned
+            return res.status(400).json({ message: 'Parking space is already assigned.' });
+        }
+
+        // Assign the parking space
+        parkingSpace.tenantId = tenantId;
+        parkingSpace.isAssigned = true;
+        parkingSpace.assignedBy = req.user._id;
+        parkingSpace.assignedDate = new Date();
+        console.log("saviii")
+        await parkingSpace.save();
+
+        res.status(200).json({ message: 'Parking space assigned successfully.' });
+    } catch (error) {
+        console.error('Error assigning parking space:', error);
+        res.status(500).json({ message: 'Error assigning parking space', error: error });
+    }
+});
+
+
+app.get('/getAssignedParking', async (req, res) => {
+    try {
+        // Assuming you have a model for assigned parking with a reference to the tenant model, you can use the populate method to fetch tenant details
+        const assignedParking = await TenantParking.find().populate('tenantId');
+
+        // Return the assigned parking data with populated tenant details as JSON
+        // console.log(assignedParking)
+        res.status(200).json(assignedParking);
+    } catch (error) {
+        console.error('Error fetching assigned parking:', error);
+        res.status(500).json({ message: 'Error fetching assigned parking', error: error });
+    }
+});
+
+
+app.post('/unassignTParking', async (req, res) => {
+    const { tenantId, LotNum } = req.body;
+
+    try {
+        // Find the parking space with the specified LotNum
+        const parkingSpace = await TenantParking.findOne({ LotNum });
+
+        if (!parkingSpace) {
+            // Parking space not found
+            return res.status(400).json({ message: 'Parking space not found.' });
+        }
+
+        // Check if the parking space is already unassigned
+        if (!parkingSpace.isAssigned) {
+            return res.status(400).json({ message: 'Parking space is already unassigned.' });
+        }
+
+        // Check if the parking space is assigned to the specified tenant
+        if (parkingSpace.tenantId.toString() !== tenantId) {
+            return res.status(400).json({ message: 'Parking space is assigned to a different tenant.' });
+        }
+
+        // Delete the parking space
+        await TenantParking.deleteOne({ LotNum })
+
+        res.status(200).json({ message: 'Parking space deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting parking space:', error);
+        res.status(500).json({ message: 'Error deleting parking space', error: error });
+    }
+});
+
+app.get('/api/tenantParking/:tenantId', async (req, res) => {
+    try {
+        const tenantId = req.params.tenantId;
+        const parkings = await TenantParking.find({ tenantId: tenantId, isAssigned: true });
+
+        if (!parkings || parkings.length === 0) {
+            return res.status(404).send('No parking details found for the specified tenant.');
+        }
+
+        res.send(parkings);
+    } catch (error) {
+        res.status(500).send('Something went wrong');
     }
 });
