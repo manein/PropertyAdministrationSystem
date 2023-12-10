@@ -23,6 +23,10 @@ export default function SecurityNavbar() {
                     <div className="navbar-item">
                         <a className="nav-link" href="/ManageTParking">Manage Tenant Parking</a>
                     </div>
+
+                    <div className="navbar-item">
+                            <a className="nav-link" href="/SChangePassword">Change Password</a>
+                    </div>
             </div>
             <div>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>

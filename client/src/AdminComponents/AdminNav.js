@@ -24,6 +24,9 @@ export default function AdminNav() {
                         <div className="navbar-item">
                             <a className="nav-link" href="/admin">View Announcements</a>
                         </div>
+                        <div className="navbar-item">
+                            <a className="nav-link" href="/AChangePassword">Change Password</a>
+                        </div>
                 </div>
                 <div>
                     <button className="btn btn-danger" onClick={handleLogout}>Logout</button>

@@ -201,13 +201,21 @@ app.get('/maintenanceRequests/tenant/:tenantId', async (req, res) => {
 app.put('/maintenanceRequests/update/:requestId', async (req, res) => {
     try {
         const requestId = req.params.requestId;
-        // Find the current request by ID
         const request = await MaintenanceRequest.findById(requestId);
-        // If the request is found, toggle its 'isResolved' status
+
         if (request) {
-            request.isresolved = !request.isresolved;
+            // Toggle isresolved status
+            request.isresolved.status = !request.isresolved.status;
+
+            // If it's being marked as resolved, update resolvedDate
+            if (request.isresolved.status) {
+                request.isresolved.resolvedDate = new Date();
+            } else {
+                // If it's being marked as unresolved, you may want to clear the resolvedDate
+                request.isresolved.resolvedDate = null;
+            }
+
             await request.save();
-            // console.log("it is toggled")
             res.json(request);
         } else {
             res.status(404).send('Maintenance request not found');
@@ -218,7 +226,18 @@ app.put('/maintenanceRequests/update/:requestId', async (req, res) => {
     }
 });
 
+app.get('/resolvedMainReq', async (req, res) => {
+    try {
+        const resolvedRequests = await MaintenanceRequest.find({ 'isresolved.status': true })
+            .sort({ 'isresolved.resolvedDate': -1 })
+            .populate('tenantId');
 
+        res.json(resolvedRequests);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
 app.post('/guestParking/request', async (req, res) => {
     try {
         const { carType, VehicleNum, Name, requestedBy, requestedFrom, requestedTo } = req.body;
@@ -525,3 +544,26 @@ app.post('/create-checkout-session', async (req, res) => {
       response.send();
     }
   );
+
+
+  
+app.post('/change-password', async (req, res) => {
+    const { userId, oldPassword, newPassword } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        if (user.password !== oldPassword) {
+            return res.status(400).send({ message: 'Incorrect old password' });
+        }
+        user.password = newPassword;
+        await user.save();
+
+        res.send({ message: 'Password successfully changed' });
+    } catch (error) {
+        res.status(500).send({ message: 'Internal server error' });
+    }
+});

@@ -40,8 +40,13 @@ const maintenanceRequestSchema = new mongoose.Schema({
         default: Date.now
     },
     isresolved: {
-        type: Boolean,
-        default: false
+        status: {
+            type: Boolean,
+            default: false
+        },
+        resolvedDate: {
+            type: Date
+        }
     }
 });
 

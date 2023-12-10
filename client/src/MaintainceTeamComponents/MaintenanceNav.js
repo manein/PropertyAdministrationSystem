@@ -19,6 +19,13 @@ export default function MaintenanceNav() {
                     <div className="navbar-item">
                         <a className="nav-link" href="/maintenance">Maintenance Request List</a>
                     </div>
+                    <div className="navbar-item">
+                        <a className="nav-link" href="/ResolvedMainReqList">Resolved Request List</a>
+                    </div>
+
+                    <div className="navbar-item">
+                            <a className="nav-link" href="/MChangePassword">Change Password</a>
+                        </div>
             </div>
             <div>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>

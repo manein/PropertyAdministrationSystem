@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import TenantNavbar from './TenantComponents/TenantNavbar';
 
 
 const AboutUs = () => {
   return (
     <div> 
+      <TenantNavbar/>
     <div className="about-us-container" style={{ backgroundColor: '#282c34', color:'white', textAlign: 'center', padding: '20px' }}>
        
       <Link className='nav-item' to='/demo'><h1 >Welcome to Prperty Administration System</h1></Link>
