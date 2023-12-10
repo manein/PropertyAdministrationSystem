@@ -21,6 +21,9 @@ const Video = () => {
         <button className="signup-button">Sign Up</button>
       </Link>  
       </div>
+      <div className="who-are-we-button">
+        <Link to='/aboutus'><button>About Us</button></Link>
+      </div>
       </div>
     </div>
   );

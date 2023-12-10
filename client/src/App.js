@@ -26,6 +26,7 @@ import TenantDash from './TenantComponents/TenantDash';
 import SecurityDash from './SecurityComponents/SecurityDash';
 import AssignTenantParking from './SecurityComponents/AssignTenantParking';
 import Demo from './Demo';
+import Payment from './TenantComponents/Payment';
     
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/manageAnnounc" element={<ManageAnnouncements />}/>
                 <Route path="/viewAnnounc" element={<ViewAnnouncements />}/>
                 <Route path="/postMainReq" element={<ProtectedElement><PostMaintenanceRequest /></ProtectedElement>}/>
+                <Route path="/payment" element={<ProtectedElement><Payment /></ProtectedElement>}/>
                 
                 <Route path="/MyMainReq" element={<ProtectedElement><TenantMaintenanceRequests /></ProtectedElement>}/>
                 

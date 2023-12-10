@@ -78,3 +78,24 @@
   .signup-button:hover {
     background-color: #2980b9;
   }
+
+  .who-are-we-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1; /* Ensure the button appears above the video */
+  }
+  
+  .who-are-we-button button {
+    padding: 10px 20px;
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .who-are-we-button button:hover {
+    background-color: #219f4e;
+  }
