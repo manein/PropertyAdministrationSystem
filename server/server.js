@@ -67,7 +67,12 @@ app.get('/getTenants', async (req, res) => {
 
 app.delete('/deleteTenant/:id', async (req, res) => {
     try {
-        const result = await User.findByIdAndDelete(req.params.id);
+        const userId = req.params.id;
+        const result = await User.findByIdAndDelete(userId);
+        await TenantParking.deleteMany({ tenantId: userId });
+        await MaintenanceRequest.deleteMany({ tenantId: userId });
+        await GuestParking.deleteMany({ requestedBy: userId });
+        
         if (result) {
             res.send({ message: 'Tenant deleted successfully' });
         } else {
