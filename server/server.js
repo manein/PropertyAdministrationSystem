@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 // const mongoString="mongodb+srv://manandevani007:XNReRhFTw9izg21j@propadmn.vpitmnh.mongodb.net/"
 
 const mongoString = "mongodb+srv://abdullearn18:abdullearn18@cluster0.rcrkkkv.mongodb.net/"
@@ -24,6 +25,7 @@ const MaintenanceRequest = require('./Schema/MaintenanceRequestSchema');
 const GuestParking = require('./Schema/GuestParkingSchema'); 
 const TenantParking = require('./Schema/TenantParkingSchema')
 
+const YOUR_DOMAIN = 'http://localhost:9000';
 // SignUP APIS
 app.post('/createUser', async (req, res) => {
 
@@ -435,3 +437,91 @@ app.get('/api/tenantParking/:tenantId', async (req, res) => {
         res.status(500).send('Something went wrong');
     }
 });
+
+app.post('/create-checkout-session', async (req, res) => {
+    const prices = await stripe.prices.list({
+      lookup_keys: [req.body.lookup_key],
+      expand: ['data.product'],
+    });
+    const session = await stripe.checkout.sessions.create({
+      billing_address_collection: 'auto',
+      line_items: [
+        {
+          price: prices.data[0].id,
+          // For metered billing, do not pass quantity
+          quantity: 1,
+  
+        },
+      ],
+      mode: 'subscription',
+      success_url: `${YOUR_DOMAIN}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    });
+  
+    res.redirect(303, session.url);
+  });
+  
+  app.post('/create-portal-session', async (req, res) => {
+    const { session_id } = req.body;
+    const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
+    const returnUrl = YOUR_DOMAIN;
+  
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: checkoutSession.customer,
+      return_url: returnUrl,
+    });
+  
+    res.redirect(303, portalSession.url);
+  });
+  
+  app.post(
+    '/webhook',
+    express.raw({ type: 'application/json' }),
+    (request, response) => {
+      let event = request.body;
+      const endpointSecret = 'whsec_12345';
+      if (endpointSecret) {
+  
+        const signature = request.headers['stripe-signature'];
+        try {
+          event = stripe.webhooks.constructEvent(
+            request.body,
+            signature,
+            endpointSecret
+          );
+        } catch (err) {
+          console.log(`⚠️  Webhook signature verification failed.`, err.message);
+          return response.sendStatus(400);
+        }
+      }
+      let subscription;
+      let status;
+      // Handle the event
+      switch (event.type) {
+        case 'customer.subscription.trial_will_end':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.deleted':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.created':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.updated':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        default:
+          // Unexpected event type
+          console.log(`Unhandled event type ${event.type}.`);
+      }
+      response.send();
+    }
+  );

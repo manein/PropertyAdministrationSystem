@@ -92,7 +92,7 @@ const AssignTenantParking = () => {
     return (
         <>
         < SecurityNavbar/>
-        <div className="container mt-3">
+        <div className="auth-form">
             <h2 className="text-center mb-4">Assign Tenant Parking Spaces</h2>
             {validationError && (
                 <div className="alert alert-danger">{validationError}</div>
@@ -143,6 +143,8 @@ const AssignTenantParking = () => {
             <button className="btn btn-primary" onClick={handleAssignParking}>
                 Assign Parking Space
             </button>
+            </div>
+            <div>
 
             <AssignedParkingTable assignedParkingData={assignedParkingData} onUnassign={fetchUnassignedParkingSpaces} />
         

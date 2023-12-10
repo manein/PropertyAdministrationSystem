@@ -15,6 +15,19 @@ const PostMaintenanceRequest = () => {
 
     const { getUserFromLocalStorage } = useContext(AuthContext);
     const user = getUserFromLocalStorage();
+    const [dates, setDates] = useState([]);
+    const [times, setTimes] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState('12:00');
+
+    const addBookingSlot = () => {
+        setDates([...dates, selectedDate]);
+        setTimes([...times, selectedTime]);
+        // Reset selected date and time
+        setSelectedDate(new Date());
+        setSelectedTime('12:00');
+      };
+    
 
     const userId = user ? user._id : ""
 
@@ -70,7 +83,7 @@ const PostMaintenanceRequest = () => {
     return (
         <>
         <TenantNavbar/>
-        <div className="container mt-3 ">
+        <div className="auth-form">
             <h2 className="text-center mb-4">Post Maintenance Request</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">

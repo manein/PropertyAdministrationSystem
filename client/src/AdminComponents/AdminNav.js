@@ -11,20 +11,21 @@ export default function AdminNav() {
     };
 
     return(
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container-fluid">
-                    <span className="navbar-brand mb-0 h1">Hello, Admin</span>
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
+        <nav className="navbar">
+                <div className="navbar-left">
+                    <span className="navbar-stable">Hello, Admin</span>
+
+                        <div className="navbar-item">
                             <a className="nav-link" href="/manageTenant">Manage Tenants</a>
-                        </li>
-                        <li className="nav-item">
+                        </div>
+                        <div className="navbar-item">
                             <a className="nav-link" href="/manageAnnounc">Manage Announcements</a>
-                        </li>
-                        <li className="nav-item">
+                        </div>
+                        <div className="navbar-item">
                             <a className="nav-link" href="/admin">View Announcements</a>
-                        </li>
-                    </ul>
+                        </div>
+                </div>
+                <div>
                     <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
                 </div>
             </nav>

@@ -41,12 +41,23 @@ const GuestParkingForm = () => {
     console.log('Form submitted:', formData);
   };
 
+  const usStates = [
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida',
+    'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
+    'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+    'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma',
+    'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah',
+    'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+  ];
+
   const calculateAmount = () => {
     const { startDate, endDate } = formData;
     const start = new Date(startDate);
     const end = new Date(endDate);
     const timeDiff = Math.abs(end.getTime() - start.getTime());
     const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    
 
     return days * 10
   };
@@ -86,16 +97,18 @@ const GuestParkingForm = () => {
             </div>
 
             <div className="form-group">
-            <label>Phone Number:</label>
-            <input
-                type="tel"
-                className="form-control"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-            />
-            </div>
+        <label>Phone Number:</label>
+        <input
+          type="tel"
+          className="form-control"
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          pattern="[0-9]{10}"  // This pattern enforces 10 digits
+          required
+        />
+        <small>Format: 1234567890</small>
+      </div>
 
             <div className="form-group" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ width: '48%' }}>
@@ -111,16 +124,22 @@ const GuestParkingForm = () => {
             </div>
 
             <div style={{ width: '48%' }}>
-                <label>State:</label>
-                <input
-                type="text"
-                className="form-control"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                required
-                />
-            </div>
+        <label>State:</label>
+        <select
+          className="form-control"
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select a state</option>
+          {usStates.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+      </div>
             </div>
 
             <div className="form-group">
