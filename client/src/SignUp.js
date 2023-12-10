@@ -5,8 +5,8 @@ import axios from 'axios';
 
 const Navbar = () => {
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <a className="navbar-brand" href="#">Property Administration System</a>
+        <nav className="na-item">
+            <a className="thead" href="/demo">Welcome to Property Administration System</a>
         </nav>
     );
 };
@@ -46,7 +46,7 @@ export default function SignUp() {
 
   return (
     <>
-    <Navbar/>
+    <Navbar />
     <section className="text-center">
     <div className="card mx-4 mx-md-5 shadow-5-strong" >
         <div className="card-body py-5 px-md-5">

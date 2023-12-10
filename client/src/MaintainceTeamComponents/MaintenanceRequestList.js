@@ -5,6 +5,10 @@ const MaintenanceRequestList = () => {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const formatDateTime = (date, time) => {
+        return `${new Date(date).toLocaleDateString()} at ${time}`;
+    };
+
 
     useEffect(() => {
         // Fetch unresolved maintenance requests
@@ -40,12 +44,13 @@ const MaintenanceRequestList = () => {
                 ) : (
                     <ul className="list-group">
                         {requests.map(request => (
-                            <li key={request._id} className="list-group-item mb-3"> {/* Added mb-3 for margin bottom */}
+                            <li key={request._id} className="list-group-item mb-3">
                                 <h5>Category: {request.category}</h5>
                                 <p>Priority: {request.priority}</p>
                                 <p>Description: {request.description}</p>
-                                <p>Tenant House No : {request.tenantId.HouseNum}</p>
-                                <p>Tenant Name: {request.tenantId.fname} {request.tenantId.lname}</p>
+                                {request.availableDates.map((date, index) => (
+                                    <p key={index}>Availability: {formatDateTime(date.date, date.fromTime)} to {formatDateTime(date.date, date.toTime)}</p>
+                                ))}
                             </li>
                         ))}
                     </ul>

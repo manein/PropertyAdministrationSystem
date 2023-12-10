@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 // const mongoString="mongodb+srv://manandevani007:XNReRhFTw9izg21j@propadmn.vpitmnh.mongodb.net/"
 
 const mongoString = "mongodb+srv://abdullearn18:abdullearn18@cluster0.rcrkkkv.mongodb.net/"
@@ -22,7 +23,9 @@ const User = require('./Schema/Users');
 const Announcement= require('./Schema/Annoucements');
 const MaintenanceRequest = require('./Schema/MaintenanceRequestSchema');
 const GuestParking = require('./Schema/GuestParkingSchema'); 
+const TenantParking = require('./Schema/TenantParkingSchema')
 
+const YOUR_DOMAIN = 'http://localhost:9000';
 // SignUP APIS
 app.post('/createUser', async (req, res) => {
 
@@ -66,7 +69,12 @@ app.get('/getTenants', async (req, res) => {
 
 app.delete('/deleteTenant/:id', async (req, res) => {
     try {
-        const result = await User.findByIdAndDelete(req.params.id);
+        const userId = req.params.id;
+        const result = await User.findByIdAndDelete(userId);
+        await TenantParking.deleteMany({ tenantId: userId });
+        await MaintenanceRequest.deleteMany({ tenantId: userId });
+        await GuestParking.deleteMany({ requestedBy: userId });
+        
         if (result) {
             res.send({ message: 'Tenant deleted successfully' });
         } else {
@@ -158,10 +166,18 @@ app.post('/maintenanceRequests', async (req, res) => {
 app.get('/unresolvedMainReq', async (req, res) => {
     try {
         const unresolvedRequests = await MaintenanceRequest.find({ isresolved: false })
-            .populate('tenantId', 'fname lname HouseNum -_id') 
+            .populate('tenantId', 'fname lname HouseNum -_id')
             .exec();
 
-        res.json(unresolvedRequests);
+        
+        res.json(unresolvedRequests.map(req => ({
+            ...req._doc,
+            availableDates: req.availableDates.map(date => ({
+                date: date.date, 
+                fromTime: date.fromTime,
+                toTime: date.toTime
+            }))
+        })));
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -185,13 +201,21 @@ app.get('/maintenanceRequests/tenant/:tenantId', async (req, res) => {
 app.put('/maintenanceRequests/update/:requestId', async (req, res) => {
     try {
         const requestId = req.params.requestId;
-        // Find the current request by ID
         const request = await MaintenanceRequest.findById(requestId);
-        // If the request is found, toggle its 'isResolved' status
+
         if (request) {
-            request.isresolved = !request.isresolved;
+            // Toggle isresolved status
+            request.isresolved.status = !request.isresolved.status;
+
+            // If it's being marked as resolved, update resolvedDate
+            if (request.isresolved.status) {
+                request.isresolved.resolvedDate = new Date();
+            } else {
+                // If it's being marked as unresolved, you may want to clear the resolvedDate
+                request.isresolved.resolvedDate = null;
+            }
+
             await request.save();
-            // console.log("it is toggled")
             res.json(request);
         } else {
             res.status(404).send('Maintenance request not found');
@@ -202,7 +226,18 @@ app.put('/maintenanceRequests/update/:requestId', async (req, res) => {
     }
 });
 
+app.get('/resolvedMainReq', async (req, res) => {
+    try {
+        const resolvedRequests = await MaintenanceRequest.find({ 'isresolved.status': true })
+            .sort({ 'isresolved.resolvedDate': -1 })
+            .populate('tenantId');
 
+        res.json(resolvedRequests);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
 app.post('/guestParking/request', async (req, res) => {
     try {
         const { carType, VehicleNum, Name, requestedBy, requestedFrom, requestedTo } = req.body;
@@ -278,5 +313,257 @@ app.get('/guestParking/tenantRequests/:tenantId', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
+    }
+});
+
+
+
+app.get('/unassignedParkingSpaces', async (req, res) => {
+    try {
+        // Fetch the list of parking spaces from the database
+        const parkingSpaces = await TenantParking.find({});
+        const assignedParkingSpaces = parkingSpaces.map((space) => space.LotNum);
+
+        const totalParkingSpaces = 15; // Total number of parking spaces
+
+        // Generate an array of unassigned parking spaces (LotNum values)
+        const unassignedSpaces = Array.from({ length: totalParkingSpaces }, (_, index) => {
+            const LotNum = index + 1;
+            
+            // Check if the LotNum exists in the database and is not assigned
+            const isAssigned = assignedParkingSpaces.includes(LotNum);
+            
+            return { LotNum, isAssigned: isAssigned }; // Mark as unassigned if not in the database
+        });
+        // console.log(unassignedSpaces);
+        res.json(unassignedSpaces);
+    } catch (error) {
+        console.error('Error fetching unassigned parking spaces:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+app.get('/getValidTenants', async (req, res) => {
+    try {
+        const validTenants = await User.find({ role: 'tenant', isAccepted: true });
+        res.json(validTenants);
+    } catch (error) {
+        console.error('Error fetching valid tenants:', error);
+        res.status(500).json({ message: 'Error fetching valid tenants', error: error });
+    }
+});
+
+app.post('/assignTParking', async (req, res) => {
+    const { tenantId, LotNum } = req.body;
+    try {
+        // Check if the parking space exists
+        let parkingSpace = await TenantParking.findOne({ LotNum });
+
+        if (!parkingSpace) {
+            // If parking space doesn't exist, create a new one
+            parkingSpace = new TenantParking({
+                LotNum,
+                tenantId,
+                isAssigned: true,
+                assignedBy: req.body.assignedBy._id,
+                assignedDate: new Date()
+            });
+
+            await parkingSpace.save();
+            return res.status(200).json({ message: 'Parking space assigned successfully.' });
+        }
+
+        if (parkingSpace.isAssigned) {
+            // Parking space is already assigned
+            return res.status(400).json({ message: 'Parking space is already assigned.' });
+        }
+
+        // Assign the parking space
+        parkingSpace.tenantId = tenantId;
+        parkingSpace.isAssigned = true;
+        parkingSpace.assignedBy = req.user._id;
+        parkingSpace.assignedDate = new Date();
+        console.log("saviii")
+        await parkingSpace.save();
+
+        res.status(200).json({ message: 'Parking space assigned successfully.' });
+    } catch (error) {
+        console.error('Error assigning parking space:', error);
+        res.status(500).json({ message: 'Error assigning parking space', error: error });
+    }
+});
+
+
+app.get('/getAssignedParking', async (req, res) => {
+    try {
+        // Assuming you have a model for assigned parking with a reference to the tenant model, you can use the populate method to fetch tenant details
+        const assignedParking = await TenantParking.find().populate('tenantId');
+
+        // Return the assigned parking data with populated tenant details as JSON
+        // console.log(assignedParking)
+        res.status(200).json(assignedParking);
+    } catch (error) {
+        console.error('Error fetching assigned parking:', error);
+        res.status(500).json({ message: 'Error fetching assigned parking', error: error });
+    }
+});
+
+
+app.post('/unassignTParking', async (req, res) => {
+    const { tenantId, LotNum } = req.body;
+
+    try {
+        // Find the parking space with the specified LotNum
+        const parkingSpace = await TenantParking.findOne({ LotNum });
+
+        if (!parkingSpace) {
+            // Parking space not found
+            return res.status(400).json({ message: 'Parking space not found.' });
+        }
+
+        // Check if the parking space is already unassigned
+        if (!parkingSpace.isAssigned) {
+            return res.status(400).json({ message: 'Parking space is already unassigned.' });
+        }
+
+        // Check if the parking space is assigned to the specified tenant
+        if (parkingSpace.tenantId.toString() !== tenantId) {
+            return res.status(400).json({ message: 'Parking space is assigned to a different tenant.' });
+        }
+
+        // Delete the parking space
+        await TenantParking.deleteOne({ LotNum })
+
+        res.status(200).json({ message: 'Parking space deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting parking space:', error);
+        res.status(500).json({ message: 'Error deleting parking space', error: error });
+    }
+});
+
+app.get('/api/tenantParking/:tenantId', async (req, res) => {
+    try {
+        const tenantId = req.params.tenantId;
+        const parkings = await TenantParking.find({ tenantId: tenantId, isAssigned: true });
+
+        if (!parkings || parkings.length === 0) {
+            return res.status(404).send('No parking details found for the specified tenant.');
+        }
+
+        res.send(parkings);
+    } catch (error) {
+        res.status(500).send('Something went wrong');
+    }
+});
+
+app.post('/create-checkout-session', async (req, res) => {
+    const prices = await stripe.prices.list({
+      lookup_keys: [req.body.lookup_key],
+      expand: ['data.product'],
+    });
+    const session = await stripe.checkout.sessions.create({
+      billing_address_collection: 'auto',
+      line_items: [
+        {
+          price: prices.data[0].id,
+          // For metered billing, do not pass quantity
+          quantity: 1,
+  
+        },
+      ],
+      mode: 'subscription',
+      success_url: `${YOUR_DOMAIN}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    });
+  
+    res.redirect(303, session.url);
+  });
+  
+  app.post('/create-portal-session', async (req, res) => {
+    const { session_id } = req.body;
+    const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
+    const returnUrl = YOUR_DOMAIN;
+  
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: checkoutSession.customer,
+      return_url: returnUrl,
+    });
+  
+    res.redirect(303, portalSession.url);
+  });
+  
+  app.post(
+    '/webhook',
+    express.raw({ type: 'application/json' }),
+    (request, response) => {
+      let event = request.body;
+      const endpointSecret = 'whsec_12345';
+      if (endpointSecret) {
+  
+        const signature = request.headers['stripe-signature'];
+        try {
+          event = stripe.webhooks.constructEvent(
+            request.body,
+            signature,
+            endpointSecret
+          );
+        } catch (err) {
+          console.log(`⚠️  Webhook signature verification failed.`, err.message);
+          return response.sendStatus(400);
+        }
+      }
+      let subscription;
+      let status;
+      // Handle the event
+      switch (event.type) {
+        case 'customer.subscription.trial_will_end':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.deleted':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.created':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        case 'customer.subscription.updated':
+          subscription = event.data.object;
+          status = subscription.status;
+          console.log(`Subscription status is ${status}.`);
+          break;
+        default:
+          // Unexpected event type
+          console.log(`Unhandled event type ${event.type}.`);
+      }
+      response.send();
+    }
+  );
+
+
+  
+app.post('/change-password', async (req, res) => {
+    const { userId, oldPassword, newPassword } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        if (user.password !== oldPassword) {
+            return res.status(400).send({ message: 'Incorrect old password' });
+        }
+        user.password = newPassword;
+        await user.save();
+
+        res.send({ message: 'Password successfully changed' });
+    } catch (error) {
+        res.status(500).send({ message: 'Internal server error' });
     }
 });

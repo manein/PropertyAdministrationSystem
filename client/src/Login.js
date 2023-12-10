@@ -1,4 +1,4 @@
-import Navbar from './NavBar';
+
 import React, { useState, useContext } from 'react'; // Add useContext
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -61,7 +61,7 @@ export default function Login() {
                 <div className="container h-custom">
                     <div className="row justify-content-center align-items-center h-100">
                         <div className="col-md-12 text-center">
-                            <h2 className="mb-5">Welcome to Property Management System</h2>
+                            <h2><a className="thead" href="/demo">Welcome to Property Administration System</a></h2>
                         </div>
                         <div className="col-md-9 col-lg-6 col-xl-5">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"

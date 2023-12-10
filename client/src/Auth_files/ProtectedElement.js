@@ -8,8 +8,8 @@ function ProtectedElement({ children }) {
     if (isLoggedIn) { // Directly check the isLoggedIn value
         return children;
     }
-    // return <Navigate to="/login" replace />;
-    return children;
+    return <Navigate to="/login" replace />;
+    // return children;
 }
 
 export default ProtectedElement;

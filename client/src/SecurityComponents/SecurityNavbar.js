@@ -13,14 +13,22 @@ export default function SecurityNavbar() {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-                <span className="navbar-brand mb-0 h1">Security Dashboard</span>
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li className="nav-item">
-                        <a className="nav-link" href="/security">Guest Parking Manager</a>
-                    </li>
-                </ul>
+        <nav className="navbar">
+            <div className="navbar-left">
+                <span className="navbar-stable">Security Dashboard</span>
+                
+                    <div className="navbar-item">
+                        <a className="nav-link" href="/security">Manage Guest Parking</a>
+                    </div>
+                    <div className="navbar-item">
+                        <a className="nav-link" href="/ManageTParking">Manage Tenant Parking</a>
+                    </div>
+
+                    <div className="navbar-item">
+                            <a className="nav-link" href="/SChangePassword">Change Password</a>
+                    </div>
+            </div>
+            <div>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
             </div>
         </nav>

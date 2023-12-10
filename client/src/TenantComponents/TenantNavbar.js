@@ -8,7 +8,7 @@ export default function TenantNavbar() {
     const { getUserFromLocalStorage,logOut } = useContext(AuthContext);
     const user = getUserFromLocalStorage();
 
-    console.log("saved user is ",user)
+    console.log("saved user is ",user);
     const handleLogout = () => {
         logOut();
         navigate('/login');
@@ -25,16 +25,10 @@ export default function TenantNavbar() {
                         <a className="nav-link" href="/tenant">Announcements</a>
                 </div>
                 <div className="navbar-item">
-                        <a className="nav-link" href="/postMainReq">Raise Maintenance Request</a>
+                        <a className="nav-link" href="/postMainReq">Maintenance Request</a>
                 </div>
                 <div className="navbar-item">
-                        <a className="nav-link" href="/reqGP">Request Guest Parking</a>
-                </div>
-                <div className="navbar-item">
-                        <a className="nav-link" href="/MyMainReq">My Maintenance Requests</a>
-                </div>
-                <div className="navbar-item">
-                        <a className="nav-link" href="/viewMyGPStatus">My Guest Parking Requests</a>
+                        <a className="nav-link" href="/reqGP">Guest Parking</a>
                 </div>
                 <div className="navbar-item">
                         <a className="nav-link" href="/aboutus">About</a>

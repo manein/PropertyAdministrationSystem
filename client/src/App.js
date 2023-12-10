@@ -24,7 +24,15 @@ import AdminDash from './AdminComponents/AdminDash';
 import MaintenanceDash from './MaintainceTeamComponents/MaintenanceDash';
 import TenantDash from './TenantComponents/TenantDash';
 import SecurityDash from './SecurityComponents/SecurityDash';
-    
+import AssignTenantParking from './SecurityComponents/AssignTenantParking';
+import Demo from './Demo';
+import Payment from './TenantComponents/Payment';
+import ResolvedRequestList from './MaintainceTeamComponents/ResolvedRequestList';
+
+import TChangePass from './TenantComponents/TChangePass';
+import AChangePass from './AdminComponents/AChangePass';
+import MChangePass from './MaintainceTeamComponents/MChangePass';
+import SChangePass from './SecurityComponents/SChangePass';
 
 function App() {
     return (
@@ -37,16 +45,22 @@ function App() {
                 <Route path="/security"   element={<ProtectedElement><SecurityDash /></ProtectedElement> } />
 
                 <Route path="/home" element={<Home />}/>
+                <Route path="/demo" element={<Demo />}/>
                 <Route path="/navbar" element={<Navbar />}/>
                 <Route path="/guestparking" element={<GuestParking />}/>
                 <Route path="/aboutus" element={<AboutUs />}/>
                 <Route path="/login" element={<Login />}/>
-                <Route path="/" element={<SignUp />}/>
+                <Route path="/" element={<Demo />}/>
                 <Route path="/signup" element={<SignUp />}/>
-                <Route path="/manageTenant" element={<ManageTenants />}/>
-                <Route path="/manageAnnounc" element={<ManageAnnouncements />}/>
-                <Route path="/viewAnnounc" element={<ViewAnnouncements />}/>
+                <Route path="/TChangePassword" element={<ProtectedElement><TChangePass /></ProtectedElement>}/>
+                <Route path="/AChangePassword" element={<ProtectedElement>< AChangePass/></ProtectedElement>}/>
+                <Route path="/MChangePassword" element={<ProtectedElement><MChangePass /></ProtectedElement>}/>
+                <Route path="/SChangePassword" element={<ProtectedElement><SChangePass /></ProtectedElement>}/>
+                <Route path="/manageTenant" element={<ProtectedElement><ManageTenants /></ProtectedElement>}/>
+                <Route path="/manageAnnounc" element={<ProtectedElement><ManageAnnouncements /></ProtectedElement>}/>
+                <Route path="/viewAnnounc" element={<ProtectedElement><ViewAnnouncements /></ProtectedElement>}/>
                 <Route path="/postMainReq" element={<ProtectedElement><PostMaintenanceRequest /></ProtectedElement>}/>
+                <Route path="/payment" element={<ProtectedElement><Payment /></ProtectedElement>}/>
                 
                 <Route path="/MyMainReq" element={<ProtectedElement><TenantMaintenanceRequests /></ProtectedElement>}/>
                 
@@ -55,8 +69,11 @@ function App() {
                 
                 <Route path="/viewMyGPStatus" element={<ProtectedElement><TenantGuestParkingStatus /></ProtectedElement>}/>
                 
-
                 <Route path="/MainReqList" element={<ProtectedElement><MaintenanceRequestList /></ProtectedElement>}/>
+                <Route path="/ResolvedMainReqList" element={<ProtectedElement><ResolvedRequestList /></ProtectedElement>}/>
+
+                <Route path="/ManageTParking" element={<ProtectedElement><AssignTenantParking /></ProtectedElement>}/>
+                
             </Routes>
       </Router>
     </AuthProvider>

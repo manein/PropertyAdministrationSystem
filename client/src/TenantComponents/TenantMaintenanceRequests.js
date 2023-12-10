@@ -57,10 +57,10 @@ const TenantMaintenanceRequests = () => {
                             <td>{request.isresolved ? 'Resolved' : 'Unresolved'}</td>
                             <td>
                                 <button 
-                                    className={`btn ${request.isresolved ? 'btn-success' : 'btn-warning'}`}
+                                    className={`btn ${request.isresolved.status ? 'btn-success' : 'btn-warning'}`}
                                     onClick={() => handleStatusChange(request._id)}
                                 >
-                                    {request.isresolved ? 'Mark as Unresolved' : 'Mark as Resolved'}
+                                    {request.isresolved.status ? 'Mark as Unresolved' : 'Mark as Resolved'}
                                 </button>
                             </td>
                         </tr>
