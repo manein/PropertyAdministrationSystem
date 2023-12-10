@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Auth_files/AuthProvider';
+import './TenantNavBar.css';
 
 export default function TenantNavbar() {
     const navigate = useNavigate();
@@ -14,29 +15,32 @@ export default function TenantNavbar() {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-                <span className="navbar-brand mb-0 h1">Hello, {user?.fname}</span>
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                        <a className="nav-link" href="/tenant">View Announcements</a>
-                    </li>
-                    <li className="nav-item">
+        <nav className="navbar">
+            <div className="navbar-left">
+                <div className="navbar-stable">
+                    <a className="navbar-stable" href='/tenant' >Hello, {user?.fname}</a>
+                </div>
+              
+                <div className="navbar-item">
+                        <a className="nav-link" href="/tenant">Announcements</a>
+                </div>
+                <div className="navbar-item">
                         <a className="nav-link" href="/postMainReq">Raise Maintenance Request</a>
-                    </li>
-                    <li className="nav-item">
+                </div>
+                <div className="navbar-item">
                         <a className="nav-link" href="/reqGP">Request Guest Parking</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="/MyMainReq">View My Maintenance Requests</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="/viewMyGPStatus">View My Guest Parking Requests</a>
-                    </li>
-                    <li className="nav-item">
+                </div>
+                <div className="navbar-item">
+                        <a className="nav-link" href="/MyMainReq">My Maintenance Requests</a>
+                </div>
+                <div className="navbar-item">
+                        <a className="nav-link" href="/viewMyGPStatus">My Guest Parking Requests</a>
+                </div>
+                <div className="navbar-item">
                         <a className="nav-link" href="/aboutus">About</a>
-                    </li>
-                </ul>
+                </div>
+            </div>
+            <div className='navbar-right'>
                 <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
             </div>
         </nav>
