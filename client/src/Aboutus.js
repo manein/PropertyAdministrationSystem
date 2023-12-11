@@ -9,7 +9,7 @@ const AboutUs = () => {
       <TenantNavbar/>
     <div className="about-us-container" style={{ backgroundColor: '#282c34', color:'white', textAlign: 'center', padding: '20px' }}>
        
-      <Link className='nav-item' to='/demo'><h1 >Welcome to Prperty Administration System</h1></Link>
+      <Link className='nav-item' to='/demo'><h1 >Welcome to Property Administration System</h1></Link>
       <p>
         We are committed to revolutionizing property
         management through cutting-edge technology. Our Property Administration
